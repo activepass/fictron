@@ -7,7 +7,8 @@ const config = {
 
 	kit: {
         alias: {
-            $components: './src/components'
+            $components: './src/components',
+            $shared: '../shared',
         },
 		adapter: adapter({
 			fallback: 'index.html',

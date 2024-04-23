@@ -1,5 +1,7 @@
 // Globally declared types used by both Electron and SvelteKit
 
+import { FicContent } from "./shared/Fic";
+
 declare global {
 	namespace App {
 		// interface Error {}
@@ -12,7 +14,7 @@ declare global {
 	// Compare this to the contextBridge.exposeInMainWorld() call in src/preload.ts.
 	interface Window {
         fictron?: {
-            getFicContent: (ficUrl: string) => Promise<any>;
+            getFicContent: (ficUrl: string) => Promise<FicContent>;
         }
         versions?: Electron.IpcRenderer;
   }
