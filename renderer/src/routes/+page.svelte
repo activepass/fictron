@@ -46,13 +46,22 @@
             next_btn.hidden = true;
         }
     }
+
+    async function ffnetGet() {
+        let url = "https://www.fanfiction.net/s/13889193/";
+        let t = await window.fictron?.getFFNetFicContent(url);
+        titleelement.innerHTML = t as string;
+    }
 </script>
 
 <button on:click={TestContent}>Random Fic</button>
 <button on:click={TestLocked}>Locked Fic</button>
 <button on:click={TestStatic}>Static Fic</button>
+<button on:click={ffnetGet}>Ffnet</button>
+----------
+<button bind:this={prev_btn} hidden>Previous</button>
+<button bind:this={next_btn} hidden>Next</button>
+<hr>
 
 <h1 bind:this={titleelement}></h1>
 <p bind:this={testelement}></p>
-<button bind:this={prev_btn} hidden>Previous</button>
-<button bind:this={next_btn} hidden>Next</button>

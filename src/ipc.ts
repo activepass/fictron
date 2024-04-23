@@ -1,8 +1,9 @@
 import { IpcEvents } from "./IpcEvents";
 import { load } from 'cheerio';
 import 'isomorphic-fetch';
-import { ipcMain } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 import { FicContent } from "../shared/Fic";
+import path from "path";
 
 const ao3_url = "https://archiveofourown.org";
 
@@ -22,7 +23,7 @@ ipcMain.handle(IpcEvents.FT_GET_FIC_CONTENT, (event, ficUrl): Promise<FicContent
             const ficcontent = $("[role='article']").html();
             const title = $(".title").first().text();
             if (title.length <= 0 ) {
-                console.log(content)
+                console.log("Locked Fic", $("body").html())
                 return {title: "Locked Fic", content: "you have to be logged in to access this"}
             }
 
@@ -37,3 +38,20 @@ ipcMain.handle(IpcEvents.FT_GET_FIC_CONTENT, (event, ficUrl): Promise<FicContent
             return {title: "Failed", content: ""}
         });
 });
+
+ipcMain.handle(IpcEvents.FT_GET_FFNET_FIC_CONTENT, (event, ficUrl): Promise<string> => {
+    console.log("CREATING WINDOW")
+    const captcha_window = new BrowserWindow({width: 800, height: 600, show: true, webPreferences: {
+        preload: path.join(__dirname, "captchaPreload.js"),
+    }});
+    captcha_window.loadURL(ficUrl);
+    return new Promise((resolve, reject) => {
+        ipcMain.on(IpcEvents.FT_CAPTCHA_SOLVED, (event, title) => {
+            console.log("CAPTCHA SOLVED")
+
+            resolve(title);
+            captcha_window.close();
+        });
+    });
+});
+

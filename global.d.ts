@@ -15,6 +15,7 @@ declare global {
 	interface Window {
         fictron?: {
             getFicContent: (ficUrl: string) => Promise<FicContent>;
+            getFFNetFicContent: (ficUrl: string) => Promise<String>;
         }
         versions?: Electron.IpcRenderer;
   }
