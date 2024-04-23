@@ -30,6 +30,7 @@
     "electron-builder"
   ],
   "devDependencies": {
+    "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "concurrently": "latest",
@@ -43,6 +44,8 @@
     "vite": "latest"
   },
   "dependencies": {
-    "electron-serve": "latest"
+    "cheerio": "1.0.0-rc.12",
+    "electron-serve": "latest",
+    "isomorphic-fetch": "^3.0.0"
   }
 }

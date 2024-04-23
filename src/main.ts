@@ -1,17 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import * as path from "path";
-import serve = require("electron-serve");
-import { IpcEvents } from "./IpcEvents";
 import { launchMainWindow, mainWindow } from "./mainWindow";
+import './ipc';
 
-
-
-async function sendProcessVersionsToRender() {
-	const processVersions: ProcessVersions = process.versions;
-	console.log("sending processVersions to IPC to pass on to renderer");
-	return processVersions;
-	// mainWindow.webContents.send('system:sendProcessVersions', processVersions);
-}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -38,10 +28,5 @@ app.on("window-all-closed", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 app.once("ready", () => {
-	ipcMain.handle(IpcEvents.FT_REQUEST_VERSIONS, (event) => {
-		console.log("Renderer is asking for process versions");
-        mainWindow.webContents.openDevTools();
-		const versionsToSend = sendProcessVersionsToRender();
-		return versionsToSend;
-	});
+	
 });

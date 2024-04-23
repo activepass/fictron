@@ -6,6 +6,9 @@ const config = {
 	preprocess: preprocess(),
 
 	kit: {
+        alias: {
+            $components: './src/components'
+        },
 		adapter: adapter({
 			fallback: 'index.html',
 			pages: 'build',

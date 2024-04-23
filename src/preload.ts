@@ -1,22 +1,23 @@
 // preload.ts
 
-// From Electron 20 onwards, preload scripts are sandboxed by default 
-// and no longer have access to a full Node.js environment. Practically, 
-// this means that you have a polyfilled require function that only 
+// From Electron 20 onwards, preload scripts are sandboxed by default
+// and no longer have access to a full Node.js environment. Practically,
+// this means that you have a polyfilled require function that only
 // has access to a limited set of APIs.
 // Read more: https://www.electronjs.org/docs/latest/tutorial/tutorial-preload
 
-import { contextBridge, ipcRenderer } from 'electron';
-import { IpcEvents } from './IpcEvents';
+import { contextBridge, ipcRenderer } from "electron";
+import { IpcEvents } from "./IpcEvents";
 
-// expose some IPC channels to the renderer process
-contextBridge.exposeInMainWorld('electronAPI', {
-  requestProcessVersions: async () => {
-    return await ipcRenderer.invoke(IpcEvents.FT_REQUEST_VERSIONS);
-  }
-});
+contextBridge.exposeInMainWorld("fictron", {
+    getFicContent: async (ficUrl: string) => {
+        return await ipcRenderer.invoke(IpcEvents.FT_GET_FIC_CONTENT, ficUrl);
+    }
+})
 
 // we can also expose variables, not just functions
-contextBridge.exposeInMainWorld('versions', {
-  chrome: () => process.versions.chrome,
-})
+contextBridge.exposeInMainWorld("versions", {
+	chrome: () => process.versions.chrome,
+	electron: () => process.versions.electron,
+	node: () => process.versions.node,
+});

@@ -1,0 +1,4 @@
+export const enum IpcEvents {
+    FT_REQUEST_VERSIONS = 'FT_REQUEST_VERSIONS',
+    FT_GET_FIC_CONTENT = 'FT_GET_FIC_CONTENT',
+}
