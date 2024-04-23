@@ -1,0 +1,25 @@
+{
+	"appId": "com.galiano.fictron",
+	"productName": "Fictron",
+	"mac": {
+		"category": "public.app-category.productivity",
+		"darkModeSupport": true,
+		"type": "distribution"
+	},
+	"linux": {
+		"target": ["deb", "tar.gz", "AppImage"],
+		"category": "Utility"
+	},
+	"directories": {
+		"output": "production"
+	},
+	"files": [
+    "package.json",
+		"./dist/main.js",
+		"./dist/preload.js",
+		{
+			"from": "./renderer/build",
+			"to": ""
+		}
+	]
+}
