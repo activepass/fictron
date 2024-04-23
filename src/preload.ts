@@ -7,11 +7,12 @@
 // Read more: https://www.electronjs.org/docs/latest/tutorial/tutorial-preload
 
 import { contextBridge, ipcRenderer } from 'electron';
+import { IpcEvents } from './IpcEvents';
 
 // expose some IPC channels to the renderer process
 contextBridge.exposeInMainWorld('electronAPI', {
   requestProcessVersions: async () => {
-    return await ipcRenderer.invoke('renderer:requestProcessVersions');
+    return await ipcRenderer.invoke(IpcEvents.FT_REQUEST_VERSIONS);
   }
 });
 

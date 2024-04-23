@@ -1,51 +1,10 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import serve = require("electron-serve");
+import { IpcEvents } from "./IpcEvents";
+import { launchMainWindow, mainWindow } from "./mainWindow";
 
-const serveURL = serve({ directory: "." });
-const isDev: Boolean = !app.isPackaged;
-const port: string = process.env.PORT ? process.env.PORT.toString() : "5173";
 
-let mainWindow: BrowserWindow | null;
-
-// Create the main browser window
-function createMainWindow() {
-	console.log(path.join(__dirname, "preload.js"));
-
-	const mainWindow = new BrowserWindow({
-		height: 600,
-		webPreferences: {
-			preload: path.join(__dirname, "preload.js"),
-			devTools: true,
-			nodeIntegration: true,
-			contextIsolation: true,
-			sandbox: true,
-		},
-		width: 800,
-	});
-
-	return mainWindow;
-}
-
-// Load Vite to launch Svelte
-function loadVite(port: string) {
-	mainWindow.loadURL(`http://localhost:${port}`).catch((e) => {
-		console.log("Error loading URL, retrying", e);
-		setTimeout(() => {
-			loadVite(port);
-		}, 200);
-	});
-}
-
-function launchMainWindow() {
-	mainWindow = createMainWindow();
-	mainWindow.once("close", () => {
-		mainWindow = null;
-	});
-
-	if (isDev) loadVite(port);
-	else serveURL(mainWindow);
-}
 
 async function sendProcessVersionsToRender() {
 	const processVersions: ProcessVersions = process.versions;
@@ -79,8 +38,9 @@ app.on("window-all-closed", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 app.once("ready", () => {
-	ipcMain.handle("renderer:requestProcessVersions", (event) => {
+	ipcMain.handle(IpcEvents.FT_REQUEST_VERSIONS, (event) => {
 		console.log("Renderer is asking for process versions");
+        mainWindow.webContents.openDevTools();
 		const versionsToSend = sendProcessVersionsToRender();
 		return versionsToSend;
 	});
