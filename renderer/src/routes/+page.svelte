@@ -1,33 +1,24 @@
-<script lang="ts">
-	import Reader from "$components/Reader.svelte";
-    let url = "https://archiveofourown.org/works/41979486/";
-
-    export function RandomFicId() {
-        return Math.floor(Math.random() * 1000000);
-    }
-
-    async function TestContent() {
-        url = `https://archiveofourown.org/works/${RandomFicId()}`
-    }
-
-    async function TestLocked() {
-        url = `https://archiveofourown.org/works/906155`;
-    }
-    function TestStatic() {
-        url = "https://archiveofourown.org/works/41979486/";
-
-    }
-
-    async function ffnetGet() {
-        url = "https://www.fanfiction.net/s/13889193/";
-    }
-
+<script>
 
 </script>
+<h1>Test</h1>
+<div class="nav">
+    <input class="url_input" type="text">
+    <button>Go</button>
+</div>
 
-<button on:click={TestContent}>Random Fic</button>
-<button on:click={TestLocked}>Locked Fic</button>
-<button on:click={TestStatic}>Static Fic</button>
-<button on:click={ffnetGet}>Ffnet</button>
-<hr>
-<Reader url={url}></Reader>
+<style>
+    .nav {
+        display: flex;
+        /* justify-content: center; */
+        align-items: center;
+        margin: 10px;
+    }
+    .nav input {
+        flex: 1;
+        margin-right: 10px;
+    }
+    h1 {
+        text-align: center;
+    }
+</style>
