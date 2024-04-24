@@ -39,17 +39,23 @@ ipcMain.handle(IpcEvents.FT_GET_FIC_CONTENT, (event, ficUrl): Promise<FicContent
         });
 });
 
-ipcMain.handle(IpcEvents.FT_GET_FFNET_FIC_CONTENT, (event, ficUrl): Promise<string> => {
+ipcMain.handle(IpcEvents.FT_GET_FFNET_FIC_CONTENT, (event, ficUrl): Promise<FicContent> => {
     console.log("CREATING WINDOW")
-    const captcha_window = new BrowserWindow({width: 800, height: 600, show: true, webPreferences: {
+    const captcha_window = new BrowserWindow({width: 800, height: 600, show: false, webPreferences: {
         preload: path.join(__dirname, "captchaPreload.js"),
     }});
     captcha_window.loadURL(ficUrl);
+
+    ipcMain.once(IpcEvents.FT_CAPTCHA_SHOW_WINDOW, (event) => {
+        console.log("SHOWING CAPTCHA")
+        captcha_window.show();
+    });
+
     return new Promise((resolve, reject) => {
-        ipcMain.on(IpcEvents.FT_CAPTCHA_SOLVED, (event, title) => {
+        ipcMain.once(IpcEvents.FT_CAPTCHA_SOLVED, (event, content) => {
             console.log("CAPTCHA SOLVED")
 
-            resolve(title);
+            resolve(content);
             captcha_window.close();
         });
     });

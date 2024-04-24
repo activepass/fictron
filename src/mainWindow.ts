@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import * as path from "path";
 import serve from "electron-serve";
 
@@ -23,6 +23,10 @@ function createMainWindow() {
 		},
         autoHideMenuBar: true,
 	});
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+        shell.openExternal(url);
+        return { action: "deny" };
+    });
 
 	return mainWindow;
 }
