@@ -22,6 +22,9 @@
             ParseContent(t!, url);
         } else {
             title.textContent = "Invalid URL";
+            content.textContent = "Please enter a valid URL";
+            document.title = "Invalid URL - Fictron";
+            src.innerHTML = ""
         }
     }
 
