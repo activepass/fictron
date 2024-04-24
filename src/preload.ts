@@ -11,10 +11,13 @@ import { IpcEvents } from "./IpcEvents";
 
 contextBridge.exposeInMainWorld("fictron", {
     getFicContent: async (ficUrl: string) => {
-        return await ipcRenderer.invoke(IpcEvents.FT_GET_FIC_CONTENT, ficUrl);
+        return await ipcRenderer.invoke(IpcEvents.GET_AO3_FIC_CONTENT, ficUrl);
     },
     getFFNetFicContent: async (ficUrl: string) => {
-        return await ipcRenderer.invoke(IpcEvents.FT_GET_FFNET_FIC_CONTENT, ficUrl);
+        return await ipcRenderer.invoke(IpcEvents.GET_FFNET_FIC_CONTENT, ficUrl);
+    },
+    getAo3FicMetadata: async (ficUrl: string) => {
+        return await ipcRenderer.invoke(IpcEvents.GET_AO3_FIC_METADATA, ficUrl);
     }
 })
 

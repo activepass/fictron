@@ -21,7 +21,7 @@ function checkReturnCaptchaState() {
             }
         });
 
-        ipcRenderer.send(IpcEvents.FT_CAPTCHA_SOLVED, Fic);
+        ipcRenderer.send(IpcEvents.CAPTCHA_SOLVED, Fic);
         return true;
     } else {
         console.log("Captcha")
@@ -34,7 +34,7 @@ addEventListener('DOMContentLoaded', () => {
     if (checkReturnCaptchaState()) {
         return;
     }
-    ipcRenderer.send(IpcEvents.FT_CAPTCHA_SHOW_WINDOW)
+    ipcRenderer.send(IpcEvents.CAPTCHA_SHOW_WINDOW)
 
     setInterval(() => {
         checkReturnCaptchaState();

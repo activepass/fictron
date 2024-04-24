@@ -1,6 +1,6 @@
 // Globally declared types used by both Electron and SvelteKit
 
-import { FicContent } from "./shared/Fic";
+import { Ao3Fic, FicContent } from "./shared/Fic";
 
 declare global {
 	namespace App {
@@ -16,6 +16,7 @@ declare global {
         fictron?: {
             getFicContent: (ficUrl: string) => Promise<FicContent>;
             getFFNetFicContent: (ficUrl: string) => Promise<FicContent>;
+            getAo3FicMetadata: (ficUrl: string) => Promise<Ao3Fic>;
         }
         versions?: Electron.IpcRenderer;
   }
