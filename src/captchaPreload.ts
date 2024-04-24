@@ -4,14 +4,15 @@ import { FicContent } from "../shared/Fic";
 
 function checkReturnCaptchaState() {
     console.log("Checking Captcha")
-    let x = document.querySelector('b.xcontrast_txt');
+    const x = document.querySelector('b.xcontrast_txt');
     if (x) {
         console.log("Captcha Done")
-        let content = document.querySelector("[role='main']");
-        let Fic = {title: x.textContent, content: content.innerHTML} satisfies FicContent as FicContent;
-        let nav_btns = document.querySelectorAll("#content_wrapper_inner > span:nth-child(7) > button");
+        const content = document.querySelector("[role='main']");
+        const chapter = document.querySelector('#chap_select') as HTMLSelectElement;
+        const Fic = {title: x.textContent, content: content.innerHTML, chapter: +chapter.value} satisfies FicContent as FicContent;
+        const nav_btns = document.querySelectorAll("#content_wrapper_inner > span:nth-child(7) > button");
 
-        let ffurl = "https://www.fanfiction.net";
+        const ffurl = "https://www.fanfiction.net";
         nav_btns.forEach(element => {
             if (element.textContent == "Next >") {
                 Fic.next = ffurl + element.getAttribute("onclick").split("'")[1];

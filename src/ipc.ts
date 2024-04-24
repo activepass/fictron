@@ -24,18 +24,25 @@ ipcMain.handle(IpcEvents.FT_GET_FIC_CONTENT, (event, ficUrl): Promise<FicContent
             const title = $(".title").first().text();
             if (title.length <= 0 ) {
                 console.log("Locked Fic", $("body").html())
-                return {title: "Locked Fic", content: "you have to be logged in to access this"}
+                return {title: "Locked Fic", content: "you have to be logged in to access this", chapter: -1}
             }
+            const chapter = $(".chapter.preface .title a").text();
 
             const next = $(".chapter.next").children().first().attr("href");
             const previous = $(".chapter.previous").children().first().attr("href");
 
             console.log(`Time taken to parse fic: ${Date.now() - start_time}ms`);
-            return {title: title, content: ficcontent, ...(next && next.length > 0 ? {next: ao3_url + next} : {}), ...(previous && previous.length > 0 ? {previous: ao3_url + previous} : {})};
+            return {
+                title: title,
+                content: ficcontent,
+                ...(chapter ? {chapter: +chapter.substring("Chapter ".length)} : {chapter: 0}),
+                ...(next && next.length > 0 ? {next: ao3_url + next} : {}),
+                ...(previous && previous.length > 0 ? {previous: ao3_url + previous} : {})
+            } satisfies FicContent;
         })
         .catch(err => {
             console.log(err)
-            return {title: "Failed", content: ""}
+            return {title: "Failed", content: "", chapter: -1}
         });
 });
 
@@ -46,12 +53,12 @@ ipcMain.handle(IpcEvents.FT_GET_FFNET_FIC_CONTENT, (event, ficUrl): Promise<FicC
     }});
     captcha_window.loadURL(ficUrl);
 
-    ipcMain.once(IpcEvents.FT_CAPTCHA_SHOW_WINDOW, (event) => {
+    ipcMain.once(IpcEvents.FT_CAPTCHA_SHOW_WINDOW, () => {
         console.log("SHOWING CAPTCHA")
         captcha_window.show();
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         ipcMain.once(IpcEvents.FT_CAPTCHA_SOLVED, (event, content) => {
             console.log("CAPTCHA SOLVED")
 
