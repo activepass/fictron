@@ -1,6 +1,6 @@
 import { IpcEvents } from "./IpcEvents";
-import { load } from 'cheerio';
 import 'isomorphic-fetch';
+import { load } from 'cheerio';
 import { BrowserWindow, ipcMain } from 'electron';
 import { FicContent } from "../shared/Fic";
 import path from "path";

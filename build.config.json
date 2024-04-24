@@ -7,19 +7,21 @@
 		"type": "distribution"
 	},
 	"linux": {
-		"target": ["deb", "tar.gz", "AppImage"],
+		"target": ["tar.gz", "AppImage"],
 		"category": "Utility"
 	},
+    "includeSubNodeModules": true,
 	"directories": {
 		"output": "production"
 	},
 	"files": [
-    "package.json",
-		"./dist/main.js",
-		"./dist/preload.js",
-		{
-			"from": "./renderer/build",
-			"to": ""
-		}
+        "package.json",
+        "./dist/main.js",
+        "./dist/preload.js",
+        "./dist/*.js",
+        {
+            "from": "./renderer/build",
+            "to": ""
+        }
 	]
 }
