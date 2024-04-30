@@ -34,3 +34,10 @@ export interface FfnetFic extends Fic {
     favs: number;
     follows: number;
 }
+
+export abstract class FicSource { 
+    abstract base_url: string;
+    abstract short: string;
+    abstract pageToContent(content: string): FicContent;
+    abstract getFic(url: string): Promise<Fic>;
+}

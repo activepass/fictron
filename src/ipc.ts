@@ -2,7 +2,9 @@ import { IpcEvents } from "./IpcEvents";
 import 'isomorphic-fetch';
 import { load } from 'cheerio';
 import { BrowserWindow, ipcMain } from 'electron';
-import { Ao3Fic, Ao3Rating, FicContent } from "../shared/Fic";
+import { Ao3Fic, Ao3Rating, FicContent, } from "../shared/Fic";
+import { Ao3Source } from "../shared/Ao3";
+import { FfnSource } from "../shared/Ffn";
 import path from "path";
 
 const ao3_url = "https://archiveofourown.org";
@@ -18,31 +20,7 @@ ipcMain.handle(IpcEvents.GET_AO3_FIC_CONTENT, (event, ficUrl): Promise<FicConten
         
         })
         .then(function(content) {
-            const start_time = Date.now();
-            const $ = load(content);
-            const ficcontent = $("[role='article']").html();
-            const title = $(".title").first().text();
-            if (title.length <= 0 ) {
-                const locked = $("#signin")
-                if (!locked) {
-                    console.log("wacky error", $("body").html())
-                    return {title: "Failed wacky", content: "", chapter: -1}
-                }
-                return {title: "Locked Fic", content: "you have to be logged in to access this", chapter: -1}
-            }
-            const chapter = $(".chapter.preface .title a").text();
-
-            const next = $(".chapter.next").children().first().attr("href");
-            const previous = $(".chapter.previous").children().first().attr("href");
-
-            console.log(`Time taken to parse fic: ${Date.now() - start_time}ms`);
-            return {
-                title: title,
-                content: ficcontent,
-                ...(chapter ? {chapter: +chapter.substring("Chapter ".length)} : {chapter: 0}),
-                ...(next && next.length > 0 ? {next: ao3_url + next} : {}),
-                ...(previous && previous.length > 0 ? {previous: ao3_url + previous} : {})
-            } satisfies FicContent;
+            return new Ao3Source().pageToContent(content);
         })
         .catch(err => {
             console.log(err)
@@ -51,7 +29,6 @@ ipcMain.handle(IpcEvents.GET_AO3_FIC_CONTENT, (event, ficUrl): Promise<FicConten
 });
 
 ipcMain.handle(IpcEvents.GET_FFNET_FIC_CONTENT, (event, ficUrl): Promise<FicContent> => {
-    console.log("CREATING WINDOW")
     const start_time = Date.now();
     const captcha_window = new BrowserWindow({width: 800, height: 600, show: false, webPreferences: {
         preload: path.join(__dirname, "captchaPreload.js"),
@@ -63,9 +40,10 @@ ipcMain.handle(IpcEvents.GET_FFNET_FIC_CONTENT, (event, ficUrl): Promise<FicCont
     });
 
     return new Promise((resolve) => {
-        ipcMain.once(IpcEvents.CAPTCHA_SOLVED, (event, content) => {
+        ipcMain.once(IpcEvents.CAPTCHA_SOLVED, (event, html) => {
             console.log(`Time taken to get fic: ${Date.now() - start_time}ms`);
-
+            console.log("USING SOURCE");
+            const content = new FfnSource().pageToContent(html);
             resolve(content);
             captcha_window.close();
         });
