@@ -4,7 +4,7 @@
     export let content_wrapper: HTMLElement;
 
     let dark_mode_button: HTMLButtonElement;
-    let dark_mode = false;
+    let dark_mode = document.body.classList.contains("dark");
 
     function alignChange(e: Event) {
         let select = e.target as HTMLSelectElement;
@@ -23,7 +23,6 @@
         } else {
             document.body.classList.remove("dark");
         }
-        dark_mode_button.innerText = dark_mode ? "Light" : "Dark";
     }
 
     
@@ -44,5 +43,5 @@
     </select>
     <!-- TODO: FONT SCALE -->
     <!-- TODO: MARGIN -->
-    <button bind:this={dark_mode_button} on:click={colourModeChanged}>Dark</button>
+    <button bind:this={dark_mode_button} on:click={colourModeChanged}>{dark_mode ? "Light" : "Dark"}</button>
 </div>
