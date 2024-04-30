@@ -53,7 +53,7 @@ ipcMain.handle(IpcEvents.GET_AO3_FIC_CONTENT, (event, ficUrl): Promise<FicConten
 ipcMain.handle(IpcEvents.GET_FFNET_FIC_CONTENT, (event, ficUrl): Promise<FicContent> => {
     console.log("CREATING WINDOW")
     const start_time = Date.now();
-    const captcha_window = new BrowserWindow({width: 800, height: 600, show: true, webPreferences: {
+    const captcha_window = new BrowserWindow({width: 800, height: 600, show: false, webPreferences: {
         preload: path.join(__dirname, "captchaPreload.js"),
     }});
     captcha_window.loadURL(ficUrl);
