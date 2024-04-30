@@ -5,12 +5,12 @@
   "version": "0.0.1",
   "description": "fic app",
   "author": "galiano",
-  "main": "./dist/main.js",
+  "main": "./dist/src/main.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=dev npm run dev:all",
     "dev:all": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run dev:svelte\" \"npm run dev:electron\"",
     "dev:svelte": "cd ./renderer/ && vite dev",
-    "dev:electron": "tsc && electron ./dist/main.js",
+    "dev:electron": "tsc && electron ./dist/src/main.js",
     "build": "cross-env NODE_ENV=production npm run build:svelte && npm run build:electron",
     "build:svelte": "cd ./renderer/ && vite build",
     "build:electron": "tsc && electron-builder build --config build.config.json",
@@ -18,7 +18,7 @@
     "postinstallarm64": "electron-builder install-app-deps --arch arm64",
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
-    "start": "npm run build && electron ./dist/main.js"
+    "start": "npm run build && electron ./dist/src/main.js"
   },
   "repository": "",
   "keywords": [
