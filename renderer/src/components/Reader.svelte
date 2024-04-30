@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import type { FicContent } from "$shared/Fic";
     import { onMount } from "svelte";
+	import ReaderSettings from "./ReaderSettings.svelte";
 
     export let url: string;
 
@@ -12,6 +13,7 @@
     let next_btn: HTMLElement;
     let prev_btn: HTMLElement;
     let src: HTMLElement;
+    let content_wrapper: HTMLElement;
 
     async function LoadContent() {
         if (url.startsWith(ao3)) {
@@ -68,7 +70,33 @@
 <button bind:this={prev_btn} hidden>Previous</button>
 <button bind:this={next_btn} hidden>Next</button>
 <span bind:this={src}></span>
+<hr>
+<ReaderSettings content_wrapper={content_wrapper}/>
 
+<div class="content" bind:this={content_wrapper}>
+    <h1 bind:this={title}></h1>
+    <p bind:this={content}></p>
+</div>
+<!-- TODO: do dark mode for the reader in a better way that doesnt affect all pages -->
+<style is:global> 
+    .content {
+        text-align: center;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
 
-<h1 bind:this={title}></h1>
-<p bind:this={content}></p>
+    body {
+        background-color: #fff;
+        color: #000;
+        transition: color 0.4s, background-color 0.4s;
+    }
+
+    body.dark {
+        background-color: #1a1a1a;
+        color: #fff;
+    }
+
+    body.dark a {
+        color: #00cc99;
+        transition: color 0.4s;
+    }
+</style>
