@@ -17,7 +17,7 @@
 
     async function LoadContent() {
         if (url.startsWith(ao3)) {
-            let t = await window.fictron?.getFicContent(url);
+            let t = await window.fictron?.getAo3FicContent(url);
             ParseContent(t!, url);
         } else if (url.startsWith(ffnet)) {
             let t = await window.fictron?.getFFNetFicContent(url);

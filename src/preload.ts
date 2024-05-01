@@ -10,15 +10,24 @@ import { contextBridge, ipcRenderer } from "electron";
 import { IpcEvents } from "./IpcEvents";
 
 contextBridge.exposeInMainWorld("fictron", {
-    getFicContent: async (ficUrl: string) => {
+    getAo3FicContent: async (ficUrl: string) => {
         return await ipcRenderer.invoke(IpcEvents.GET_AO3_FIC_CONTENT, ficUrl);
     },
     getFFNetFicContent: async (ficUrl: string) => {
         return await ipcRenderer.invoke(IpcEvents.GET_FFNET_FIC_CONTENT, ficUrl);
     },
-    getAo3FicMetadata: async (ficUrl: string) => {
-        return await ipcRenderer.invoke(IpcEvents.GET_AO3_FIC_METADATA, ficUrl);
-    }
+    addAo3FicToLibrary: async (ficUrl: string) => {
+        return await ipcRenderer.invoke(IpcEvents.ADD_AO3_FIC_TO_LIBRARY, ficUrl);
+    },
+    getMinFicDetail: (library_id: number) => {
+        return ipcRenderer.invoke(IpcEvents.GET_MIN_FIC, library_id);
+    },
+    getAo3FicDetail: (library_id: number) => {
+        return ipcRenderer.invoke(IpcEvents.GET_AO3_FIC, library_id);
+    },
+    getLibrary: () => {
+        return ipcRenderer.invoke(IpcEvents.GET_LIBRARY);
+    },
 })
 
 // we can also expose variables, not just functions

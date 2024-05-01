@@ -30,6 +30,7 @@
     "electron-builder"
   ],
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.10",
     "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
@@ -44,6 +45,7 @@
     "vite": "latest"
   },
   "dependencies": {
+    "better-sqlite3": "^9.6.0",
     "cheerio": "1.0.0-rc.12",
     "electron-serve": "latest",
     "isomorphic-fetch": "^3.0.0"

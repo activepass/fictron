@@ -3,7 +3,7 @@ import { IpcEvents } from "./IpcEvents";
 
 function checkReturnCaptchaState() {
     console.log("Checking Captcha")
-    const x = document.querySelector('#challenge-running');
+    const x = document.querySelector('.main-content');
     if (!x) {
         console.log("Captcha Done")
         ipcRenderer.send(IpcEvents.CAPTCHA_SOLVED, document.documentElement.outerHTML);

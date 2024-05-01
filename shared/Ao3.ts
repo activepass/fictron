@@ -1,7 +1,19 @@
 import { load } from 'cheerio';
-import { Fic, FicContent, FicSource } from './Fic';
+import { FicDetail, FicContent, FicSource } from './Fic';
+
+export type Ao3Rating = "General Audiences" | "Teen And Up Audiences" | "Mature" | "Explicit" | "Not Rated";
+
+export interface Ao3FicDetail extends FicDetail {
+    fandoms: string[];
+    rating: Ao3Rating;
+    comments: number;
+    kudos: number;
+    bookmarks: number;
+    hits: number;
+}
 
 export class Ao3Source extends FicSource {
+    
     base_url = "https://archiveofourown.org";
     short = "ao3"; 
 
@@ -33,8 +45,32 @@ export class Ao3Source extends FicSource {
         } satisfies FicContent;
     }
 
-    getFic(url: string): Promise<Fic> {
-        console.log('url', url)
+    getFic(content: string, url: string): Ao3FicDetail {
+        const start_time = Date.now();
+        const $ = load(content);
+        const title = $(".title").first().text().trim();
+        const author_a = $(".byline a");
+        const author = author_a.text();
+        const author_link = this.base_url + author_a.attr("href");
+        const published = $("dd.published").text();
+        const updated = $("dd.status").text();
+        const language = $("dd.language").text().trim();
+        const words = +$("dd.words").text().replace(/,/g, '');
+        const chapters = +$("dd.chapters").text().replace(/,/g, '').split("/")[0];
+        const fandoms = $(".fandom a").map((_, elem) => $(elem).text()).get();
+        const rating = $("dd.rating").text().trim() as Ao3Rating;
+        const comments = +$("dd.comments").text().replace(/,/g, '');
+        const kudos = +$("dd.kudos").text().replace(/,/g, '');
+        const bookmarks = +$("dd.bookmarks").text().replace(/,/g, '');
+        const hits = +$("dd.hits").text().replace(/,/g, '');
+
+        console.log(`Time taken to parse fic meta: ${Date.now() - start_time}ms`);
+        return {title, src: url, words, chapters, author, author_link, publish_time: Date.parse(published), update_time: Date.parse(updated), language, fandoms, rating, comments, kudos, bookmarks, hits, last_check: Date.now()} satisfies Ao3FicDetail;
+    }
+
+    getUrlForChapter(fic: Ao3FicDetail, chapter: number): string {
+        console.log('fic', fic)
+        console.log('chapter', chapter)
         throw new Error('Method not implemented.');
     }
     

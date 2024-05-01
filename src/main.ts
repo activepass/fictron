@@ -1,5 +1,6 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import { launchMainWindow, mainWindow } from "./mainWindow";
+import { app, BrowserWindow } from "electron";
+import { launchMainWindow } from "./mainWindow";
+import { initLibrary } from "../shared/Library";
 import './ipc';
 
 
@@ -8,6 +9,7 @@ import './ipc';
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
 	launchMainWindow();
+    console.log("dir: ", app.getPath("userData"))
 
 	app.on("activate", function () {
 		// On macOS it's common to re-create a window in the app when the
@@ -28,5 +30,5 @@ app.on("window-all-closed", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 app.once("ready", () => {
-	
+	initLibrary(app);
 });

@@ -1,7 +1,14 @@
 import { load } from 'cheerio';
-import { Fic, FicContent, FicSource } from './Fic';
+import { FicDetail, FicContent, FicSource } from './Fic';
+
+export interface FfnetFicDetail extends FicDetail {
+    reviews: number;
+    favs: number;
+    follows: number;
+}
 
 export class FfnSource extends FicSource {
+    
     base_url = "https://www.fanfiction.net";
     short = "ffn"; 
 
@@ -14,19 +21,26 @@ export class FfnSource extends FicSource {
         const nav_btns = $("#content_wrapper_inner > span:nth-child(7) > button");
         console.log('nav_btns', nav_btns)
 
-        // nav_btns.forEach(element => {
-        //     if (element.textContent == "Next >") {
-        //         Fic.next = ffurl + element.getAttribute("onclick").split("'")[1];
-        //     } else if (element.textContent == "< Prev") {
-        //         Fic.previous = ffurl + element.getAttribute("onclick").split("'")[1];
-        //     }
-        // });
+        nav_btns.each((_, elem) => {
+            const btn = $(elem);
+            if (btn.text() === "Next >") {
+                Fic.next = this.base_url + btn.attr("onclick")!.split("'")[1];
+            } else if (btn.text() === "< Prev") {
+                Fic.previous = this.base_url + btn.attr("onclick")!.split("'")[1];
+            }
+        });
+
         return Fic;
     }
 
-    getFic(url: string): Promise<Fic> {
+    getFic(url: string): FfnetFicDetail {
         console.log('url', url)
         throw new Error('Method not implemented.');
     }
     
+    getUrlForChapter(fic: FicDetail, chapter: number): string {
+        console.log('fic', fic)
+        console.log('chapter', chapter)
+        throw new Error('Method not implemented.');
+    }
 }

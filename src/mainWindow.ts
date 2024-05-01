@@ -1,9 +1,9 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, shell } from "electron";
 import * as path from "path";
 import serve from "electron-serve";
 
 const serveURL = serve({ directory: "." });
-const isDev: Boolean = !app.isPackaged;
+const isDev: boolean = !app.isPackaged;
 const port: string = process.env.PORT ? process.env.PORT.toString() : "5173";
 export let mainWindow: BrowserWindow;
 
@@ -21,9 +21,13 @@ function createMainWindow() {
 			contextIsolation: true,
 			sandbox: true,
 		},
+        icon: path.join(__dirname, "icon.png"),
         autoHideMenuBar: true,
 	});
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith("http://localhost") || url.startsWith("file://")) {
+            return { action: "deny" };
+        }
         shell.openExternal(url);
         return { action: "deny" };
     });

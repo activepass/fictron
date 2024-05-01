@@ -1,6 +1,8 @@
 // Globally declared types used by both Electron and SvelteKit
 
-import { Ao3Fic, FicContent } from "./shared/Fic";
+import { Ao3FicDetail } from "./shared/Ao3";
+import { FicContent, MinFicDetail } from "./shared/Fic";
+// import { Ao3Fic } from "./shared/Ao3";
 
 declare global {
 	namespace App {
@@ -14,9 +16,13 @@ declare global {
 	// Compare this to the contextBridge.exposeInMainWorld() call in src/preload.ts.
 	interface Window {
         fictron?: {
-            getFicContent: (ficUrl: string) => Promise<FicContent>;
+            getAo3FicContent: (ficUrl: string) => Promise<FicContent>;
             getFFNetFicContent: (ficUrl: string) => Promise<FicContent>;
-            getAo3FicMetadata: (ficUrl: string) => Promise<Ao3Fic>;
+            addAo3FicToLibrary: (ficUrl: string) => Promise<number>;
+            addFFNetFicToLibrary: (ficUrl: string) => Promise<number>;
+            getMinFicDetail: (ficUrl: string) => Promise<MinFicDetail | null>;
+            getAo3FicDetail: (ficUrl: string) => Promise<Ao3FicDetail | null>;
+            getLibrary: () => Promise<MinFicDetail[]>;
         }
         versions?: Electron.IpcRenderer;
   }
