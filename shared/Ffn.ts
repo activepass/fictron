@@ -53,11 +53,11 @@ export class FfnSource extends FicSource {
         const regexable = details.match(/Chapters: (\d+) - Words: ([\d,]+) - Reviews: ([\d,]+) - Favs: ([\d,]+) - Follows: ([\d,]+)/m)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, chapters, words, reviews, favs, follows] = regexable!;
-        const status = details.match(/Status: (\w+)/m)[1]
+        const status = details.match(/Status: (\w+)/m)
 
         return {
             library_id: null,
-            complete: status === "Complete",
+            complete: status && status[0] === "Complete",
             title,
             src_url: this.normaliseUrl(url),
             last_check: Date.now(),
