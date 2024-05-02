@@ -10,15 +10,18 @@
 		"target": ["tar.gz", "AppImage"],
 		"category": "Utility"
 	},
+    "win": {
+        "target": "nsis"
+    },
     "includeSubNodeModules": true,
 	"directories": {
 		"output": "production"
 	},
 	"files": [
         "package.json",
-        "./dist/main.js",
-        "./dist/preload.js",
-        "./dist/*.js",
+        "./dist/src/main.js",
+        "./dist/src/preload.js",
+        "./dist/**/*.js",
         {
             "from": "./renderer/build",
             "to": ""
