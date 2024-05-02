@@ -49,8 +49,6 @@
             <FicPanel fic={fic} />
             {/each}
         </div>
-    {:else}
-        <p>Library is empty</p>
     {/if}
 {/await}
 
