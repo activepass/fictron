@@ -86,17 +86,22 @@ ipcMain.handle(
 				return response.text();
 			})
 			.then(function (content) {
-				const metadata = new Ao3Source().getFic(content, ficUrl);
-				// eslint-disable-next-line prefer-const
-				let [exists, library_id] = Ao3FicAlreadyExists(ficUrl);
-				if (exists) {
-					console.log("updating fic");
-					updateAo3Fic(library_id, metadata);
-					return library_id;
-				}
-				library_id = addAo3Fic(metadata);
-
-				return library_id;
+                try {
+                    const metadata = new Ao3Source().getFic(content, ficUrl);
+                    // eslint-disable-next-line prefer-const
+                    let [exists, library_id] = Ao3FicAlreadyExists(ficUrl);
+                    if (exists) {
+                        console.log("updating fic");
+                        updateAo3Fic(library_id, metadata);
+                        return library_id;
+                    }
+                    library_id = addAo3Fic(metadata);
+                    
+                    return library_id;
+                } catch (e) {
+                    console.error(e);
+                    return -1;
+                }
 			})
 			.catch((err) => {
 				console.log(err);
@@ -161,18 +166,23 @@ ipcMain.handle(
 				console.log(
 					`Time taken to get fic: ${Date.now() - start_time}ms`
 				);
-				const content = new FfnSource().getFic(html, ficUrl);
-				// eslint-disable-next-line prefer-const
-				let [exists, library_id] = FfnFicAlreadyExists(ficUrl);
-				if (exists) {
-					console.log("updating fic");
-					updateFfnFic(library_id, content);
-					return library_id;
-				}
-				library_id = addFfnFic(content);
-
-				resolve(library_id);
-				captcha_window.close();
+                try {
+                    const content = new FfnSource().getFic(html, ficUrl);
+                    // eslint-disable-next-line prefer-const
+                    let [exists, library_id] = FfnFicAlreadyExists(ficUrl);
+                    if (exists) {
+                        console.log("updating fic");
+                        updateFfnFic(library_id, content);
+                        return library_id;
+                    }
+                    library_id = addFfnFic(content);
+    
+                    resolve(library_id);
+                    captcha_window.close();
+                } catch (e) {
+                    console.error(e);
+                    resolve(-1);
+                }
 			});
 		});
 	}

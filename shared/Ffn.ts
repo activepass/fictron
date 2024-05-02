@@ -51,6 +51,7 @@ export class FfnSource extends FicSource {
         const update_time = $('.xgray > span:nth-child(3)').text().orDefault(publish_time);
 
         const regexable = details.match(/Chapters: (\d+) - Words: ([\d,]+) - Reviews: ([\d,]+) - Favs: ([\d,]+) - Follows: ([\d,]+)/m)
+        if (!regexable) throw new Error("Failed to parse fic details");
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, chapters, words, reviews, favs, follows] = regexable!;
         const status = details.match(/Status: (\w+)/m)
