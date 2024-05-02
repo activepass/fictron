@@ -1,13 +1,14 @@
 <script lang='ts'>
-	import type { FicContent } from "$shared/Fic";
+    import type { FicContent } from "$shared/Fic";
+    import type { ChapterReporter } from "$lib/ChapterReporter";
     import { onMount } from "svelte";
 	import ReaderSettings from "./ReaderSettings.svelte";
+	import { ao3_url, ffn_url } from "$shared/Constants";
 
     export let url: string;
-    console.log(url)
+    export let reporter: ChapterReporter | undefined = undefined;
 
-    const ao3 = "https://archiveofourown.org/";
-    const ffnet = "https://www.fanfiction.net/";
+
 
     let title: HTMLElement;
     let content: HTMLElement;
@@ -25,10 +26,10 @@
             return;
         }
 
-        if (url.startsWith(ao3)) {
+        if (url.startsWith(ao3_url)) {
             let t = await window.fictron?.getAo3FicContent(url);
             ParseContent(t!, url);
-        } else if (url.startsWith(ffnet)) {
+        } else if (url.startsWith(ffn_url)) {
             let t = await window.fictron?.getFFNetFicContent(url);
             ParseContent(t!, url);
         } else {
@@ -65,6 +66,7 @@
         } else {
             next_btn.hidden = true;
         }
+        reporter?.reportChapter(fic.chapter);
     }
 
 
@@ -83,17 +85,24 @@
 <ReaderSettings content_wrapper={content_wrapper}/>
 
 <div class="content" bind:this={content_wrapper}>
+    <!-- svelte-ignore a11y-missing-content -->
     <h1 bind:this={title}></h1>
-    <p bind:this={content}></p>
+    <p class="text-wrapper" bind:this={content}></p>
 </div>
 <!-- TODO: do dark mode for the reader in a better way that doesnt affect all pages -->
-<style is:global> 
+<style> 
     .content {
         text-align: center;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
 
-    body {
+    .text-wrapper {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    /* TODO: MOVE THIS OUT OF READER */
+    /* body {
         background-color: #fff;
         color: #000;
         transition: color 0.4s, background-color 0.4s;
@@ -107,10 +116,10 @@
     body.dark a {
         color: #00cc99;
         transition: color 0.4s;
-    }
+    } */
 
     img {
         max-width: 99%;
-        max-height: 99%;
     }
+
 </style>

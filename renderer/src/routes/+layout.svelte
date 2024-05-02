@@ -7,7 +7,7 @@
     <a href="/">Home</a>
     <a href="/reader">Reader</a>
     <a href="/fic/1">Fic 1</a>
-    <a href="/fic/23">fic 23</a>
+    <a href="/read/1/ao3?chapter=2">fic 1 chapter 2</a>
     <a href="/library">library</a>
 </nav>
 <hr>

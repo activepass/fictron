@@ -23,17 +23,25 @@ declare global {
         fictron?: {
             getAo3FicContent: (ficUrl: string) => Promise<FicContent>;
             getFFNetFicContent: (ficUrl: string) => Promise<FicContent>;
+
             addAo3FicToLibrary: (ficUrl: string) => Promise<number>;
             addFFNetFicToLibrary: (ficUrl: string) => Promise<number>;
+
             getMinFicDetail: (library_id: number) => Promise<MinFicDetail | null>;
             getAo3FicDetail: (library_id: number) => Promise<Ao3FicDetail | null>;
             getFfnFicDetail: (library_id: number) => Promise<FfnetFicDetail | null>;
+
             getAo3FicUrl: (library_id: number, chapter: number) => Promise<string>;
             getFfnFicUrl: (library_id: number, chapter: number) => Promise<string>;
+
             linkAo3Fic: (library_id: number, ficUrl: string) => Promise<number>;
             linkFfnFic: (library_id: number, ficUrl: string) => Promise<number>;
 
+            chapterAo3: (library_id: number, chapter: number) => void;
+            chapterFfn: (library_id: number, chapter: number) => void;
+
             getLibrary: () => Promise<MinFicDetail[]>;
+            getLibraryRecent: () => Promise<MinFicDetail[]>;
         }
         versions?: Electron.IpcRenderer;
   }

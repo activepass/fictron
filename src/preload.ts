@@ -28,6 +28,9 @@ contextBridge.exposeInMainWorld("fictron", {
     getLibrary: () => {
         return ipcRenderer.invoke(IpcEvents.GET_LIBRARY);
     },
+    getLibraryRecent: () => {
+        return ipcRenderer.invoke(IpcEvents.GET_LIBRARY_RECENT);
+    },
     getAo3FicUrl: (library_id: number, chapter: number) => {
         return ipcRenderer.invoke(IpcEvents.GET_AO3_FIC_URL, library_id, chapter);
     },
@@ -45,7 +48,14 @@ contextBridge.exposeInMainWorld("fictron", {
     },
     linkFfnFic: (library_id: number, ficUrl: string) => {
         return ipcRenderer.invoke(IpcEvents.LINK_FFNET_FIC, library_id, ficUrl);
-    }
+    },
+    chapterAo3: (library_id: number, chapter: number) => {
+        ipcRenderer.send(IpcEvents.CHAPTER_AO3, library_id, chapter);
+    },
+    chapterFfn: (library_id: number, chapter: number) => {
+        ipcRenderer.send(IpcEvents.CHAPTER_FFNET, library_id, chapter);
+    },
+
 })
 
 // we can also expose variables, not just functions

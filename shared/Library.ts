@@ -2,9 +2,9 @@ import BetterSqlite3 from "better-sqlite3";
 import Database from "better-sqlite3";
 import {} from "electron";
 import path from "path";
-import { Ao3FicDetail } from "./Ao3";
+import { Ao3FicDetail, Ao3Source } from "./Ao3";
 import { MinFicDetail } from "./Fic";
-import { FfnetFicDetail } from "./Ffn";
+import { FfnSource, FfnetFicDetail } from "./Ffn";
 
 export let db: BetterSqlite3.Database;
 export let dbPath: string;
@@ -63,81 +63,102 @@ export function initLibrary(app: Electron.App) {
     );`).run();
 }
 
-function addBaseFic(name: string, author_name: string): number {
-    if (name.trim().length === 0 || author_name.trim().length === 0) {
-        console.log("Invalid fic name or author name")
-        return -1;
-    }
+// function xaddBaseFic(name: string, author_name: string): number {
+//     if (name.trim().length === 0 || author_name.trim().length === 0) {
+//         console.log("Invalid fic name or author name")
+//         return -1;
+//     }
 
-    const row = db.prepare(`INSERT INTO library (name, author_name, last_interaction) VALUES (?, ?, ?)`).run(name, author_name, Date.now());
-    if (!row) {
-        console.log("Error adding fic to library");
-        return -1;
-    }
-    return row.lastInsertRowid as number;
-}
+//     const row = db.prepare(`INSERT INTO library (name, author_name, last_interaction) VALUES (?, ?, ?)`).run(name, author_name, Date.now());
+//     if (!row) {
+//         console.log("Error adding fic to library");
+//         return -1;
+//     }
+//     return row.lastInsertRowid as number;
+// }
+
 
 export function addAo3Fic(fic: Ao3FicDetail): number {
-    const library_id = addBaseFic(fic.title, fic.author_name);
-    if (library_id === -1) {
-        console.log("eat shit")
+    db.prepare('BEGIN').run();
+    try {
+        const row = db.prepare(`INSERT INTO library (name, author_name, last_interaction) VALUES (?, ?, ?)`).run(fic.title, fic.author_name, Date.now());
+        if (!row) {
+            console.log("Error adding fic to library");
+            db.prepare('ROLLBACK').run();
+            return -1;
+        }
+        const library_id = row.lastInsertRowid;
+        db.prepare(`insert into ao3_library values (${Object.values(fic).map(() => '?').join(",")})`)
+            .run(
+                library_id,
+                fic.complete ? 1 : 0,
+                fic.title,
+                fic.src_url,
+                fic.recent_chapter,
+                fic.last_check,
+                fic.author_name,
+                fic.author_url,
+                fic.publish_time,
+                fic.update_time,
+                fic.words,
+                fic.language,
+                fic.chapters,
+                fic.fandoms.join(","),
+                fic.rating,
+                fic.comments,
+                fic.kudos,
+                fic.bookmarks,
+                fic.hits
+            );
+        db.prepare('COMMIT').run();
+        return library_id as number;
+    } catch (e) {
+        console.log(e)
+        db.prepare('ROLLBACK').run();
         return -1;
     }
-    db.prepare(`insert into ao3_library values (${Object.values(fic).map(() => '?').join(",")})`)
-        .run(
-            library_id,
-            fic.complete ? 1 : 0,
-            fic.title,
-            fic.src_url,
-            fic.recent_chapter,
-            fic.last_check,
-            fic.author_name,
-            fic.author_url,
-            fic.publish_time,
-            fic.update_time,
-            fic.words,
-            fic.language,
-            fic.chapters,
-            fic.fandoms.join(","),
-            fic.rating,
-            fic.comments,
-            fic.kudos,
-            fic.bookmarks,
-            fic.hits
-        )
-    return library_id;
 }
 
 export function addFfnFic(fic: FfnetFicDetail): number {
-    const library_id = addBaseFic(fic.title, fic.author_name)
-    if (library_id === -1) {
-        console.log("eat shit")
+    db.prepare('BEGIN').run();
+    try {
+        const row = db.prepare(`INSERT INTO library (name, author_name, last_interaction) VALUES (?, ?, ?)`).run(fic.title, fic.author_name, Date.now());
+        if (!row) {
+            console.log("Error adding fic to library");
+            db.prepare('ROLLBACK').run();
+            return -1;
+        }
+        const library_id = row.lastInsertRowid;
+        db.prepare(`insert into ffn_library values (${Object.values(fic).map(() => '?').join(",")})`)
+            .run(
+                library_id,
+                fic.complete ? 1 : 0,
+                fic.title,
+                fic.src_url,
+                fic.last_check,
+                fic.recent_chapter,
+                fic.author_name,
+                fic.author_url,
+                fic.words,
+                fic.chapters,
+                fic.publish_time,
+                fic.update_time,
+                fic.language,
+                fic.reviews,
+                fic.follows,
+                fic.favs
+            );
+        db.prepare('COMMIT').run();
+        return library_id as number;
+    } catch(e) {
+        console.log(e)
+        db.prepare('ROLLBACK').run();
         return -1;
     }
-    db.prepare(`insert into ffn_library values (${Object.values(fic).map(() => '?').join(",")})`)
-        .run(
-            library_id,
-            fic.complete ? 1 : 0,
-            fic.title,
-            fic.src_url,
-            fic.last_check,
-            fic.recent_chapter,
-            fic.author_name,
-            fic.author_url,
-            fic.words,
-            fic.chapters,
-            fic.publish_time,
-            fic.update_time,
-            fic.language,
-            fic.reviews,
-            fic.follows,
-            fic.favs
-        )
-    return library_id
 }
 
 export function Ao3FicAlreadyExists(fic_url: string): [boolean, number] {
-    const exists = db.prepare(`SELECT library_id FROM ao3_library WHERE src_url = ?`).get(fic_url) as unknown as {library_id: number};
+    const exists = db.prepare(`SELECT library_id FROM ao3_library WHERE src_url = ?`).get(new Ao3Source().normaliseUrl(fic_url)) as unknown as {library_id: number};
     if (!exists) {
         return [false, -1]
     }
@@ -145,7 +166,7 @@ export function Ao3FicAlreadyExists(fic_url: string): [boolean, number] {
 }
 
 export function FfnFicAlreadyExists(fic_url: string): [boolean, number] {
-    const exists = db.prepare(`SELECT library_id FROM ffn_library WHERE src_url = ?`).get(fic_url) as unknown as {library_id: number};
+    const exists = db.prepare(`SELECT library_id FROM ffn_library WHERE src_url = ?`).get(new FfnSource().normaliseUrl(fic_url)) as unknown as {library_id: number};
     if (!exists) {
         return [false, -1]
     }
@@ -178,6 +199,10 @@ export function getFfnFicDetail(library_id: number): FfnetFicDetail | null {
 
 export function getLibrary(): MinFicDetail[] {
     return db.prepare("select id, name, author_name from library order by last_interaction desc").all() as MinFicDetail[];
+}
+
+export function getLibraryRecent(): MinFicDetail[] {
+    return db.prepare("select id, name, author_name from library order by last_interaction desc limit 5").all() as MinFicDetail[];
 }
 
 export function updateAo3Fic(library_id: number, fic: Ao3FicDetail) {
@@ -262,4 +287,18 @@ export function linkFfnFic(library_id: number, fic: FfnetFicDetail): boolean {
             fic.favs
         )
     return true
+}
+
+function interact(library_id: number) {
+    db.prepare(`UPDATE library SET last_interaction = ? WHERE id = ?`).run(Date.now(), library_id);
+}
+
+export function ao3Chapter(library_id: number, chapter: number): void {
+    db.prepare(`UPDATE ao3_library SET recent_chapter = ? WHERE library_id = ? and recent_chapter < ${chapter}`).run(chapter, library_id);
+    interact(library_id);
+}
+
+export function ffnChapter(library_id: number, chapter: number): void {
+    db.prepare(`UPDATE ffn_library SET recent_chapter = ? WHERE library_id = ? and recent_chapter < ${chapter}`).run(chapter, library_id);
+    interact(library_id);
 }

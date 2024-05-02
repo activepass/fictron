@@ -47,7 +47,11 @@
     {:then fic} 
         {#if fic}
             <h2 class="source">Fanfiction.net</h2>
-            <a href="/read/{fic.library_id}/ffn">Read</a>
+            {#if fic.recent_chapter <= 0}
+                <a href="/read/{fic.library_id}/ffn">Start Reading</a>
+            {:else }
+                <a href="/read/{fic.library_id}/ffn?chapter={fic.recent_chapter}">Continue (ch.{fic.recent_chapter})</a>
+            {/if}
             <p>Words: {fic.words}</p>
             <p>Chapters: {fic.chapters}</p>
             {#if fic.complete}

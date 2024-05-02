@@ -1,4 +1,6 @@
 <script lang='ts'>
+	import FicPanel from "$components/FicPanel.svelte";
+
 
 </script>
 
@@ -8,11 +10,21 @@
     <p>Loading</p>
 {:then library} 
     {#if library && library.length > 0}
-        {#each library as fic}
-            <a href="/fic/{fic.id}"><h2>{fic.name}</h2></a>
-            <p>By: {fic.author_name}</p>
-        {/each}
+        <div class="panel-wrapper">
+            {#each library as fic}
+                <FicPanel fic={fic} />
+            {/each}
+        </div>
     {:else}
         <p>Library is empty</p>
     {/if}
 {/await}
+
+<style>
+    .panel-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+</style>

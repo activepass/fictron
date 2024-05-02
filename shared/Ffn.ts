@@ -27,7 +27,6 @@ export class FfnSource extends FicSource {
         const chapter = $('#chap_select').val()!;
         const Fic = {title: title.text(), content: ficcontent.html()!, chapter: +chapter} satisfies FicContent as FicContent;
         const nav_btns = $("#content_wrapper_inner > span:nth-child(7) > button");
-        console.log('nav_btns', nav_btns)
 
         nav_btns.each((_, elem) => {
             const btn = $(elem);
@@ -76,8 +75,8 @@ export class FfnSource extends FicSource {
         } satisfies FfnetFicDetail as FfnetFicDetail;
     }
     
-    getUrlForChapter(library_id: number, chapter: number): string {
+    getUrlForChapter(library_id: number, chapter: number): Promise<string> {
         const url = getFfnFicUrl(library_id);
-        return url + `/${chapter}`;
+        return Promise.resolve(url + `/${chapter}`);
     }
 }

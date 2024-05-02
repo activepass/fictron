@@ -35,5 +35,5 @@ export abstract class FicSource {
     abstract normaliseUrl(url: string): string;
     abstract pageToContent(content: string): FicContent;
     abstract getFic(content: string, url: string): FicDetail;
-    abstract getUrlForChapter(library_id: number, chapter: number): string;
+    abstract getUrlForChapter(library_id: number, chapter: number): Promise<string>;
 }

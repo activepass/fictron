@@ -103,18 +103,18 @@ export class Ao3Source extends FicSource {
         } satisfies Ao3FicDetail;
     }
 
-    getUrlForChapter(library_id: number, chapter: number): string {
+    getUrlForChapter(library_id: number, chapter: number): Promise<string> {
         console.log("Chapter is", chapter)
         const url = getAo3FicUrl(library_id);
         if (chapter === 1) {
-            return url;
+            return Promise.resolve(url);
         }
         let nav_url = url;
         if (nav_url.endsWith("/")) {
             nav_url = nav_url.slice(0, -1);
         }
         nav_url = `${nav_url}/navigate`;
-        fetch(nav_url)
+        return fetch(nav_url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -123,7 +123,7 @@ export class Ao3Source extends FicSource {
             })
             .then(content => {
                 const $ = load(content);
-                const chapter_url = $("ol.index > li:nth-child(3) > a").attr("href");
+                const chapter_url = $(`ol.index > li:nth-child(${chapter}) > a`).attr("href");
                 if (!chapter_url) {
                     throw new Error("Chapter not found");
                 }
