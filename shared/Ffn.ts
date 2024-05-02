@@ -40,6 +40,31 @@ export class FfnSource extends FicSource {
         return Fic;
     }
 
+    inferTime(str: string): string {
+        const now = new Date();
+
+        // Check if the string matches "<month_short> day" pattern
+        const monthDayRegex = /^(\w{3}) (\d{1,2})$/;
+        const monthDayMatch = str.match(monthDayRegex);
+        if (monthDayMatch) {
+            const monthShort = monthDayMatch[1];
+            const day = parseInt(monthDayMatch[2]);
+            const year = now.getFullYear(); // Assume current year
+            return `${monthShort} ${day}, ${year}`;
+        }
+
+        // Check if the string matches "xh ago" pattern
+        const hourAgoRegex = /^(\d+)h ago$/;
+        const hourAgoMatch = str.match(hourAgoRegex);
+        if (hourAgoMatch) {
+            const hoursAgo = parseInt(hourAgoMatch[1]);
+            const agoDate = new Date(now.getTime() - hoursAgo * 60 * 60 * 1000);
+            return agoDate.toString();
+        }
+
+        return str;
+    }
+
     getFic(content: string, url: string): FfnetFicDetail {
         const $ = load(content);
         const title = $('b.xcontrast_txt').text();
@@ -67,8 +92,8 @@ export class FfnSource extends FicSource {
             author_url,
             words: +words.replace(/,/g, ''),
             chapters: +chapters,
-            publish_time: Date.parse(publish_time),
-            update_time: Date.parse(update_time),
+            publish_time: Date.parse(this.inferTime(publish_time)),
+            update_time: Date.parse(this.inferTime(update_time)),
             language: details.split(" - ")[1],
             reviews: +reviews.replace(/,/g, ''),
             follows: +follows.replace(/,/g, ''),
