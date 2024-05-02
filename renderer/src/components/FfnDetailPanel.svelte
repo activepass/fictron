@@ -5,7 +5,7 @@
 
     export let library_id: number;
     let detail: Promise<FfnetFicDetail | null>;
-    let Ao3Fic: FfnetFicDetail | null = null;
+    let FfnFic: FfnetFicDetail | null = null;
 
     let input: HTMLInputElement;
 
@@ -21,11 +21,11 @@
     }
 
     async function CheckFic() {
-        if (!Ao3Fic) {
-            console.log("No Ao3 Fic")
+        if (!FfnFic) {
+            console.log("No Ffn Fic")
             return;
         }
-        let num = await window.fictron?.addFFNetFicToLibrary(Ao3Fic.src_url);
+        let num = await window.fictron?.addFFNetFicToLibrary(FfnFic.src_url);
         console.log(num)
         detail = detail
     }
@@ -35,7 +35,7 @@
        detail.then((thing) => {
             console.log(thing)
             if (thing) {
-                Ao3Fic = thing;
+                FfnFic = thing;
             }
         })
     }

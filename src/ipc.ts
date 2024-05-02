@@ -173,7 +173,8 @@ ipcMain.handle(
                     if (exists) {
                         console.log("updating fic");
                         updateFfnFic(library_id, content);
-                        return library_id;
+                        resolve(library_id);
+                        return;
                     }
                     library_id = addFfnFic(content);
     
@@ -264,7 +265,6 @@ ipcMain.handle(
 				console.log("Linking fic to library_id: ", library_id);
 				let success = linkFfnFic(library_id, content);
 
-				resolve(library_id);
 				captcha_window.close();
 			});
 		});
