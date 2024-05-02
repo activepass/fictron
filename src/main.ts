@@ -3,6 +3,9 @@ import { launchMainWindow } from "./mainWindow";
 import { initLibrary } from "../shared/Library";
 import './ipc';
 
+String.prototype.orDefault = function(defaultValue) {
+    return this.toString().trim() || defaultValue;
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

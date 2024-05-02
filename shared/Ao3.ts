@@ -1,5 +1,6 @@
 import { load } from 'cheerio';
 import { FicDetail, FicContent, FicSource } from './Fic';
+import { getAo3FicUrl } from './Library';
 
 export type Ao3Rating = "General Audiences" | "Teen And Up Audiences" | "Mature" | "Explicit" | "Not Rated";
 
@@ -12,15 +13,26 @@ export interface Ao3FicDetail extends FicDetail {
     hits: number;
 }
 
+
+
+
 export class Ao3Source extends FicSource {
     
     base_url = "https://archiveofourown.org";
     short = "ao3"; 
 
+    normaliseUrl(url: string): string {
+        const reg = /https:\/\/archiveofourown.org\/works\/\d+/;
+        if (reg.test(url)) {
+            return url.match(reg)![0];
+        }
+        throw new Error("Invalid Ao3 URL, is this an error? or a shit url? url is: " + url)
+    }
+
     pageToContent(content: string): FicContent {
         const start_time = Date.now();
         const $ = load(content);
-        const ficcontent = $("[role='article']").html();
+        const ficcontent = $("[role='article']").html().replace("<h3 class=\"landmark heading\" id=\"work\">Chapter Text</h3>", "");
         const title = $(".title").first().text();
         if (title.length <= 0 ) {
             const locked = $("#signin")
@@ -53,25 +65,70 @@ export class Ao3Source extends FicSource {
         const author = author_a.text();
         const author_link = this.base_url + author_a.attr("href");
         const published = $("dd.published").text();
-        const updated = $("dd.status").text();
+        const updated = $("dd.status").text().orDefault(published);
         const language = $("dd.language").text().trim();
         const words = +$("dd.words").text().replace(/,/g, '');
-        const chapters = +$("dd.chapters").text().replace(/,/g, '').split("/")[0];
+        const chapter_info = $("dd.chapters").text().match(/([0-9]+)\/([0-9?]+)/m);
+        
+        const curr_chapter = +chapter_info[1];
+        const total_chapters = chapter_info[2] === "?" ? -1 : +chapter_info[2];
+
         const fandoms = $(".fandom a").map((_, elem) => $(elem).text()).get();
         const rating = $("dd.rating").text().trim() as Ao3Rating;
-        const comments = +$("dd.comments").text().replace(/,/g, '');
-        const kudos = +$("dd.kudos").text().replace(/,/g, '');
-        const bookmarks = +$("dd.bookmarks").text().replace(/,/g, '');
-        const hits = +$("dd.hits").text().replace(/,/g, '');
+        const comments = +$("dd.comments").text().replace(/,/g, '').orDefault('0');
+        const kudos = +$("dd.kudos").text().replace(/,/g, '').orDefault('0');
+        const bookmarks = +$("dd.bookmarks").text().replace(/,/g, '').orDefault('0');
+        const hits = +$("dd.hits").text().replace(/,/g, '').orDefault('0');
 
         console.log(`Time taken to parse fic meta: ${Date.now() - start_time}ms`);
-        return {title, src: url, words, chapters, author, author_link, publish_time: Date.parse(published), update_time: Date.parse(updated), language, fandoms, rating, comments, kudos, bookmarks, hits, last_check: Date.now()} satisfies Ao3FicDetail;
+        return {title,
+            src_url: this.normaliseUrl(url),
+            words,
+            chapters: curr_chapter,
+            author_name: author,
+            author_url: author_link,
+            publish_time: Date.parse(published),
+            update_time: Date.parse(updated),
+            language,
+            fandoms,
+            rating,
+            comments,
+            kudos,
+            bookmarks,
+            hits, 
+            last_check: Date.now(),
+            library_id: null,
+            recent_chapter: 0,
+            complete: curr_chapter === total_chapters 
+        } satisfies Ao3FicDetail;
     }
 
-    getUrlForChapter(fic: Ao3FicDetail, chapter: number): string {
-        console.log('fic', fic)
-        console.log('chapter', chapter)
-        throw new Error('Method not implemented.');
+    getUrlForChapter(library_id: number, chapter: number): string {
+        console.log("Chapter is", chapter)
+        const url = getAo3FicUrl(library_id);
+        if (chapter === 1) {
+            return url;
+        }
+        let nav_url = url;
+        if (nav_url.endsWith("/")) {
+            nav_url = nav_url.slice(0, -1);
+        }
+        nav_url = `${nav_url}/navigate`;
+        fetch(nav_url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(content => {
+                const $ = load(content);
+                const chapter_url = $("ol.index > li:nth-child(3) > a").attr("href");
+                if (!chapter_url) {
+                    throw new Error("Chapter not found");
+                }
+                return this.base_url + chapter_url;
+            });
     }
     
 }

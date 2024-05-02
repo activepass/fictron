@@ -1,16 +1,16 @@
 <script lang='ts'>
-	import { Ao3Source } from "$shared/Ao3";
+	import { ao3_url, ffn_url } from "$shared/Constants";
     import { goto } from '$app/navigation';
 
     let search: HTMLInputElement;
 
     function addUrl() {
-        if (search.value.startsWith(new Ao3Source().base_url)) {
+        if (search.value.startsWith(ao3_url) || search.value.startsWith(ffn_url)) {
             goto(`/fic?src=${search.value}`);
         }
     }
 </script>
-<h1>Test</h1>
+<h1>Enter a Fic Url</h1>
 <div class="nav">
     <input bind:this={search} class="url_input" type="text">
     <button on:click={addUrl}>Go</button>

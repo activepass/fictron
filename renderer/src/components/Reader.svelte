@@ -4,6 +4,7 @@
 	import ReaderSettings from "./ReaderSettings.svelte";
 
     export let url: string;
+    console.log(url)
 
     const ao3 = "https://archiveofourown.org/";
     const ffnet = "https://www.fanfiction.net/";
@@ -16,6 +17,14 @@
     let content_wrapper: HTMLElement;
 
     async function LoadContent() {
+        if (!url) {
+            title.textContent = "No URL Provided";
+            content.textContent = "Please provide a URL to read";
+            document.title = "No URL Provided - Fictron";
+            src.innerHTML = ""
+            return;
+        }
+
         if (url.startsWith(ao3)) {
             let t = await window.fictron?.getAo3FicContent(url);
             ParseContent(t!, url);
@@ -98,5 +107,10 @@
     body.dark a {
         color: #00cc99;
         transition: color 0.4s;
+    }
+
+    img {
+        max-width: 99%;
+        max-height: 99%;
     }
 </style>

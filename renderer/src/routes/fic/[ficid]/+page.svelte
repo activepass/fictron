@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
     import type { MinFicDetail } from '$shared/Fic';
 	import Ao3DetailPanel from '$components/Ao3DetailPanel.svelte';
+	import FfnDetailPanel from '$components/FfnDetailPanel.svelte';
 
     export let data;
     let fic: Promise<MinFicDetail | null>;
@@ -14,7 +15,6 @@
 
 </script>
 
-<h1>Fic {data.id}</h1>
 {#await fic}
     <p>Loading Fic</p>
 {:then fic} 
@@ -26,4 +26,15 @@
     {/if}
 {/await}
 
-<Ao3DetailPanel library_id={data.id} />
+<div class="panels">
+    <Ao3DetailPanel library_id={data.id} />
+    <FfnDetailPanel library_id={data.id} />
+</div>
+
+<style>
+    .panels {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+</style>
