@@ -44,7 +44,7 @@ export class FfnSource extends FicSource {
         const $ = load(content);
         const title = $('b.xcontrast_txt').text();
         const details = $('.xgray').text()
-        const author_a = $('a.xcontrast_txt:nth-child(5)');
+        const author_a = $('a.xcontrast_txt:nth-child(5)').length == 0 ? $('a.xcontrast_txt:nth-child(4)') : $('a.xcontrast_txt:nth-child(5)');
         const author = author_a.text();
         const author_url = this.base_url + author_a.attr('href')!;
         const publish_time = $('.xgray > span:nth-child(4)').text();
