@@ -261,11 +261,13 @@ ipcMain.handle(
 						"Fic exists and is linked to library_id: ",
 						existinglibid
 					);
-					return -1;
+					resolve(-1);
+                    captcha_window.close();
+                    return;
 				}
 				console.log("Linking fic to library_id: ", library_id);
 				let success = linkFfnFic(library_id, content);
-
+                resolve(library_id);
 				captcha_window.close();
 			});
 		});
