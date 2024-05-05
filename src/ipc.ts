@@ -174,6 +174,7 @@ ipcMain.handle(
                         console.log("updating fic");
                         updateFfnFic(library_id, content);
                         resolve(library_id);
+                        captcha_window.close();
                         return;
                     }
                     library_id = addFfnFic(content);
