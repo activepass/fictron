@@ -101,22 +101,6 @@
         padding-right: 1em;
     }
 
-    /* TODO: MOVE THIS OUT OF READER */
-    /* body {
-        background-color: #fff;
-        color: #000;
-        transition: color 0.4s, background-color 0.4s;
-    }
-
-    body.dark {
-        background-color: #1a1a1a;
-        color: #fff;
-    }
-
-    body.dark a {
-        color: #00cc99;
-        transition: color 0.4s;
-    } */
 
     img {
         max-width: 99%;
