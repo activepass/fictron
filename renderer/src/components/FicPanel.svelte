@@ -6,11 +6,17 @@
     function openFic() {
         goto(`/fic/${fic.id}`);
     }
+
+    function ariaEnterPressed(e: KeyboardEvent) {
+        console.log(e)
+        if (e.key === "Enter") {
+            openFic();
+        }
+    }
+
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="library-pane" on:click={openFic}>
+<div class="library-pane" on:click={openFic} role="button" tabindex=0 on:keydown={ariaEnterPressed}>
     <h2>{fic.name}</h2>
     <p>By: {fic.author_name}</p>
 

@@ -11,7 +11,7 @@
             window.alert("Failed to add Fic!")
             return;
         }
-        goto(`/fic/${id}`);
+        window.location.href = `/fic/${id}`;
     }
 
     async function addUrl() {
@@ -27,23 +27,23 @@
     }
 
     onMount(() => {
-        search.addEventListener("keydown", (e) => {
-            if (e.key == "Enter") {
-                addUrl();
-            }
-        })
+        // search.addEventListener("keydown", (e) => {
+        //     if (e.key == "Enter") {
+        //         addUrl();
+        //     }
+        // })
     })
 </script>
-<h1>Enter a Fic Url</h1>
+<!-- <h1>Enter a Fic Url</h1>
 <div class="nav">
     <input bind:this={search} class="url_input" type="text">
     <button on:click={addUrl}>Go</button>
-</div>
+</div> -->
 {#await window.fictron?.getLibraryRecent()}
     <p>Loading</p>
 {:then library} 
     {#if library && library.length > 0}
-        <h2>Recently Read:</h2>
+        <h2>Recently Read &gt;</h2>
         <div class="panel-wrapper">
             {#each library as fic}
             <FicPanel fic={fic} />
