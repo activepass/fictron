@@ -70,6 +70,15 @@
         background-color: var(--background-light);
     }
 
+    .navbtn:hover {
+        background-color: var(--book-hover);
+        cursor: pointer;
+    }
+
+    body.dark .navbtn:hover {
+        background-color: var(--book-hover-dark);
+    }
+
     
     body.dark .navbtn {
         border-color: white;

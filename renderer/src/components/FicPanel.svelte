@@ -26,7 +26,7 @@
     * {
         --book-outline: black;
         --book-outline-dark: white;
-        --book-hover: #f0f0f0;
+        --book-hover: #dbd9d9;
         --book-hover-dark: #333;
     }
     .library-pane {
