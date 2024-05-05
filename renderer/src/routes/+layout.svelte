@@ -61,6 +61,12 @@
         --background-light: white;
         --background-dark: #1a1a1a;
     }
+
+    * img {
+        max-width: 99%;
+        max-height: 99%;
+    }
+
     .navbtn {
         height: 20px;
         padding: 10px;

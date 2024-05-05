@@ -12,9 +12,8 @@
 
     let title: HTMLElement;
     let content: HTMLElement;
-    let next_btn: HTMLElement;
-    let prev_btn: HTMLElement;
-    let src: HTMLElement;
+    let prev_url = "";
+    let next_url = "";
     let content_wrapper: HTMLElement;
 
     async function LoadContent() {
@@ -22,7 +21,6 @@
             title.textContent = "No URL Provided";
             content.textContent = "Please provide a URL to read";
             document.title = "No URL Provided - Fictron";
-            src.innerHTML = ""
             return;
         }
 
@@ -36,7 +34,6 @@
             title.textContent = "Invalid URL";
             content.textContent = "Please enter a valid URL";
             document.title = "Invalid URL - Fictron";
-            src.innerHTML = ""
         }
     }
 
@@ -49,26 +46,30 @@
             title.textContent = fic.title;
             document.title = fic.title + " - Fictron";
         }
-        src.innerHTML = `src: <a href="${u}" target="_blank">${url}</a>`;
         if (fic.previous) {
-            prev_btn.hidden = false;
-            prev_btn.onclick = () => {
-                url = fic.previous!;
-            }
+            document.querySelectorAll(".prev")?.forEach(e => e.classList.remove("hidden"));
+            prev_url = fic.previous!;
         } else {
-            prev_btn.hidden = true;
+            document.querySelectorAll(".prev")?.forEach(e => e.classList.add("hidden"));
         }
         if (fic.next) {
-            next_btn.hidden = false;
-            next_btn.onclick = () => {
-                url = fic.next!;
-            }
+            document.querySelectorAll(".next")?.forEach(e => e.classList.remove("hidden"));
+            next_url = fic.next!;
         } else {
-            next_btn.hidden = true;
+            document.querySelectorAll(".next")?.forEach(e => e.classList.add("hidden"));
         }
         reporter?.reportChapter(fic.chapter);
     }
 
+    function GoPrev() {
+        if (!prev_url || prev_url.trim() == "") return;
+        url = prev_url;
+    }
+
+    function GoNext() {
+        if (!next_url || next_url.trim() == "") return;
+        url = next_url;
+    }
 
     $: {
         url;
@@ -77,20 +78,43 @@
 
 </script>
 
-
-<button bind:this={prev_btn} hidden>Previous</button>
-<button bind:this={next_btn} hidden>Next</button>
-<span bind:this={src}></span>
-<hr>
-<ReaderSettings content_wrapper={content_wrapper}/>
+<div class="chapbtns">
+    <button on:click={GoPrev} class="prev hidden">Previous</button>
+    <ReaderSettings content_wrapper={content_wrapper}/>
+    <button on:click={GoNext} class="next hidden">Next</button>
+</div>
 
 <div class="content" bind:this={content_wrapper}>
     <!-- svelte-ignore a11y-missing-content -->
     <h1 bind:this={title}></h1>
     <p class="text-wrapper" bind:this={content}></p>
 </div>
-<!-- TODO: do dark mode for the reader in a better way that doesnt affect all pages -->
+
+<div class="chapbtns">
+    <button on:click={GoPrev} class="prev hidden">Previous</button>
+    <button on:click={GoNext} class="next hidden">Next</button>
+</div>
+
 <style> 
+    .hidden {
+        opacity: 0;
+    }
+    .chapbtns {
+        padding-top: 1em;
+        display: flex;
+        justify-content: space-between;
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    .chapbtns:has(.prev[hidden]) {
+        flex-direction: row-reverse;
+    }
+
+    .chapbtns button:not(.hidden) {
+        cursor: pointer;
+    }
+
     .content {
         text-align: center;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -102,8 +126,5 @@
     }
 
 
-    img {
-        max-width: 99%;
-    }
 
 </style>
