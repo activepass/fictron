@@ -59,6 +59,7 @@
             document.querySelectorAll(".next")?.forEach(e => e.classList.add("hidden"));
         }
         reporter?.reportChapter(fic.chapter);
+        SmoothScrollToTop();
     }
 
     function GoPrev() {
@@ -69,6 +70,14 @@
     function GoNext() {
         if (!next_url || next_url.trim() == "") return;
         url = next_url;
+
+    }
+
+    function SmoothScrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }
 
     $: {
