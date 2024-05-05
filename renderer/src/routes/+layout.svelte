@@ -12,6 +12,13 @@
         localStorage.setItem('darkmode', darkmode_state.toString())
     }
 
+    function darkModeKeydown(e: KeyboardEvent) {
+        if (e.key === "Enter" || e.key === " ") {
+            toggleDarkMode()
+            e.preventDefault()
+        }
+    }
+
     if (darkmode_state) {
         document.body.classList.add('dark')
     }
@@ -35,12 +42,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
         </a>
-        <!-- <input class="ficsearch" type="text" placeholder="Enter a fic url...">
-        <div class="navbtn searchbtn" on:click={} role="button" tabindex="0">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20px">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-              </svg>
-        </div> -->
         <FicSearch />
         <a href="/library" class="navbtn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20px">
@@ -48,30 +49,42 @@
             </svg>
         </a>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div class="navbtn darkmodebutton" on:click={toggleDarkMode} role="button" tabindex=0>
+        <div class="navbtn darkmodebutton" on:click={toggleDarkMode} role="button" tabindex=0 on:keydown={darkModeKeydown}>
             <DarkModeIcon darkmode={darkmode_state} />
         </div>
         <!-- <button class="darkmodebutton" bind:this={darkmodebutton} on:click={toggleDarkMode}>Dark</button> -->
     </div>
 </nav>
-<hr>
 <slot />
 <style is:global>
+    * {
+        --background-light: white;
+        --background-dark: #1a1a1a;
+    }
     .navbtn {
         height: 20px;
         padding: 10px;
         border: 1px solid black;
         border-radius: 10px;
-        transition: border-color 0.4s;
+        transition: border-color 0.4s, background-color 0.4s;
+        background-color: var(--background-light);
     }
 
     
     body.dark .navbtn {
         border-color: white;
+        background-color: var(--background-dark);
     }
 
     nav {
         height: 40px;
+        margin-bottom: 9px;
+        padding-bottom: 1px;
+        padding-top: 5px;
+        position: sticky;
+        top: 0;
+        /* background-color: white; */
+        transition: background-color 0.4s;
     }
 
     .navcontainer {
@@ -89,7 +102,7 @@
 
 
     body {
-        background-color: #fff;
+        background-color: var(--background-light);
         color: #000;
     }
 
@@ -98,7 +111,7 @@
     }
 
     body.dark {
-        background-color: #1a1a1a;
+        background-color: var(--background-dark);
         color: #fff;
     }
 
