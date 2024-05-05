@@ -1,47 +1,62 @@
 <script lang='ts'>
 	import { onMount } from "svelte";
 
-    export let content_wrapper: HTMLElement;
+    let content_wrapper: HTMLElement;
 
-    let dark_mode_button: HTMLButtonElement;
-    let dark_mode = document.body.classList.contains("dark");
+    let align: HTMLSelectElement;
+    let font: HTMLSelectElement;
 
-    function alignChange(e: Event) {
-        let select = e.target as HTMLSelectElement;
-        content_wrapper.style.textAlign = select.value;
+    function saveReaderSettings() {
+        localStorage.setItem("reader_settings", JSON.stringify({
+            alignment: align.value,
+            font: font.value
+        }));
     }
 
-    function fontChange(e: Event) {
-        let select = e.target as HTMLSelectElement;
-        content_wrapper.style.fontFamily = select.value;
-    }
-
-    function colourModeChanged() {
-        dark_mode = !dark_mode;
-        if (dark_mode) {
-            document.body.classList.add("dark");
-        } else {
-            document.body.classList.remove("dark");
+    function loadReaderSettings() {
+        if (!content_wrapper) return;
+        let settings = localStorage.getItem("reader_settings");
+        if (settings) {
+            let s = JSON.parse(settings);
+            console.log(s.alignment, s.font)
+            align.value = s.alignment;
+            alignChange();
+            font.value = s.font;
+            fontChange();
         }
     }
+
+
+    function alignChange() {
+        console.log(content_wrapper.style)
+        content_wrapper.style.textAlign = align.value;
+        saveReaderSettings();
+    }
+
+    function fontChange() {
+        content_wrapper.style.fontFamily = font.value;
+        saveReaderSettings();
+    }
+
+    onMount(() => {
+        content_wrapper = document.querySelector("div.content") as HTMLElement
+        loadReaderSettings()
+    });
 
     
 </script>
 <!-- TODO: SETTINGS SHOULD SAVE AND BE LOADED -->
-
-<!-- TODO: MAKE THIS AN ACTUAL TOOLBAR -->
 <div class="reader_settings">
-    <select name="alignment" id="alignment" on:change={alignChange}>
+    <select name="alignment" id="alignment" on:change={alignChange} bind:this={align}>
         <option value="center">Center</option>
         <option value="left">Left</option>
         <option value="right">Right</option>
     </select>
-    <select name="font" id="font_select" on:change={fontChange}>
-        <option value="system-ui">System</option>
-        <option value="serif">serif</option>
-        <option value="sans-serif">Sans-serif</option>
+    <select name="font" id="font_select" on:change={fontChange} bind:this={font}>
+        <option value="system-ui">System Font</option>
+        <option value="serif">Serif</option>
+        <option value="sans-serif">Sans-Serif</option>
     </select>
     <!-- TODO: FONT SCALE -->
     <!-- TODO: MARGIN -->
-    <button bind:this={dark_mode_button} on:click={colourModeChanged}>{dark_mode ? "Light" : "Dark"}</button>
 </div>

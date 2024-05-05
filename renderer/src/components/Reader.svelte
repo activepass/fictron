@@ -80,7 +80,7 @@
 
 <div class="chapbtns">
     <button on:click={GoPrev} class="prev hidden">Previous</button>
-    <ReaderSettings content_wrapper={content_wrapper}/>
+    <ReaderSettings />
     <button on:click={GoNext} class="next hidden">Next</button>
 </div>
 
